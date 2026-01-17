@@ -4,7 +4,6 @@ from motor.motor_asyncio import AsyncIOMotorClient
 from beanie import init_beanie
 from dotenv import load_dotenv
 
-# Import your helper files
 from models import PetReport, PetTags
 from ai_service import analyze_pet_image
 
