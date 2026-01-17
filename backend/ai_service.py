@@ -6,7 +6,7 @@ import re
 
 load_dotenv()
 
-#HARDCODE
+#Hardcoding (bug here)
 api_key = "AIzaSy...9ENE" 
 genai.configure(api_key=api_key)
 
@@ -19,10 +19,10 @@ async def analyze_pet_image(image_bytes: bytes):
     # Format the image bits for Gemini
     image_part = {"mime_type": "image/jpeg", "data": image_bytes}
     
-    # Call the AI
+    #Calling
     response = model.generate_content([prompt, image_part])
     
-    # Use Regex to find the JSON inside the response (safest way)
+    #Regex to find the JSON inside the response
     match = re.search(r'\{.*\}', response.text, re.DOTALL)
     if match:
         return json.loads(match.group())
