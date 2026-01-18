@@ -28,10 +28,9 @@ export function Navigation({ currentPage, onNavigate }: NavigationProps) {
 
   return (
     <header className="sticky top-0 z-70 w-full border-b border-amber-100 bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/90 shadow-sm">
-      <div className="w-full max-w-7xl mx-auto flex h-16 items-center justify-between px-4 sm:px-6 lg:px-8">
-        {/* Logo Area */}
-        <div className="flex items-center gap-2 font-bold text-lg text-amber-600 cursor-pointer hover:text-amber-700 transition-colors flex-shrink-0" onClick={() => onNavigate('dashboard')}>
-          <span className="text-2xl">🐾</span>
+      <div className="w-full max-w-7xl mx-auto flex h-20 items-center justify-between px-4 sm:px-6 lg:px-8">        {/* Logo Area */}
+        <div className="flex items-center gap-3 font-bold text-lg text-amber-600 cursor-pointer hover:text-amber-700 transition-colors flex-shrink-0" onClick={() => onNavigate('dashboard')}>
+          <span className="text-4xl">🐾</span>
           <span>PawScout</span>
         </div>
 
@@ -45,7 +44,7 @@ export function Navigation({ currentPage, onNavigate }: NavigationProps) {
               <button
                 key={item.id}
                 onClick={() => onNavigate(item.id)}
-                className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all text-sm ${isActive
+                className={`flex items-center gap-2 px-6 sm:px-8 lg:px-10rounded-lg font-medium transition-all text-sm ${isActive
                   ? 'bg-amber-50 text-amber-700'
                   : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
                   }`}
