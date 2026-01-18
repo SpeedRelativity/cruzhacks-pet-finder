@@ -1,23 +1,28 @@
 'use client';
 
-import { useState } from 'react';
-import { Search, Upload, MapPin, CheckCircle2, ChevronRight } from 'lucide-react';
+import { MapPin, CheckCircle2, Upload as UploadIcon, Heart, Sparkles } from 'lucide-react';
 import Link from 'next/link';
+
+const comms1image = '/images/coms1.jpg'
+const comms2image = '/images/coms2.jpg'
+const comms3image = '/images/coms3.jpg'
+
+const article1image = '/images/article1.jpg'
+const article2image = '/images/article2.jpg'
+const article3image = '/images/article3.jpg'
 
 const heroImageSrc = '/images/hero.jpg';
 
 export function Dashboard() {
-  const [searchQuery, setSearchQuery] = useState('');
-
   const userReports = [
     {
       id: 1,
       name: 'Luna',
       type: 'Golden Retriever',
       status: 'missing' as const,
-      location: 'Brooklyn, NY',
-      date: 'Dec 15, 2024',
-      image: 'https://images.unsplash.com/photo-1633722715463-d30f4f325e24?w=400&h=400&fit=crop',
+      location: 'San Ramon, CA',
+      date: 'Jan 15, 2026',
+      image: comms2image,
       tags: ['Golden', 'Large', 'Red Collar'],
     },
     {
@@ -25,20 +30,20 @@ export function Dashboard() {
       name: 'Max',
       type: 'Beagle',
       status: 'missing' as const,
-      location: 'Queens, NY',
+      location: 'Palo Alto, CA',
       date: 'Dec 13, 2024',
-      image: 'https://images.unsplash.com/photo-1505628346881-b72b27e84530?w=400&h=400&fit=crop',
+      image: comms1image,
       tags: ['Tricolor', 'Medium', 'Blue Tag'],
     },
     {
       id: 3,
-      name: 'Charlie',
-      type: 'Golden Retriever',
+      name: 'Melanie',
+      type: 'Russian Ragdoll',
       status: 'missing' as const,
-      location: 'Manhattan, NY',
+      location: 'Santa Cruz, CA',
       date: 'Dec 10, 2024',
-      image: 'https://images.unsplash.com/photo-1552053831-71594a27632d?w=400&h=400&fit=crop',
-      tags: ['Golden', 'Large', 'Friendly'],
+      image: comms3image,
+      tags: ['White', 'm', 'Friendly'],
     },
   ];
 
@@ -47,7 +52,7 @@ export function Dashboard() {
       
       {/* 1. HERO SECTION: Split Layout */}
       <section className="relative pt-20 pb-32 overflow-hidden">
-        <div className="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-12 items-center">
+        <div className="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 garp-12 items-center">
           
           <div className="relative z-10 space-y-8">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 border border-blue-100 text-blue-600 text-sm font-semibold">
@@ -55,7 +60,7 @@ export function Dashboard() {
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
               </span>
-              24 New matches found today
+              24 New Pets Found Today
             </div>
             
             <h1 className="text-6xl lg:text-7xl font-bold tracking-tight leading-[1.1] text-slate-900">
@@ -70,7 +75,7 @@ export function Dashboard() {
 
             <div className="flex flex-wrap gap-4 pt-4">
               <Link href="/upload" className="px-8 py-4 bg-amber-500 text-white rounded-2xl font-bold hover:bg-amber-600 transition-colors shadow-lg flex items-center gap-2 scale-100 hover:scale-105 transition-transform">
-                <Upload className="w-5 h-5" /> Report Lost Pet
+                <UploadIcon className="w-5 h-5" /> Report Lost Pet
               </Link>
               <Link href="/gallery" className="px-8 py-4 rounded-2xl font-bold text-slate-700 border-2 border-slate-200 hover:bg-slate-50 transition-colors">
                 Browse Current Sightings
@@ -95,8 +100,7 @@ export function Dashboard() {
                     <CheckCircle2 className="text-amber-500 w-6 h-6" />
                   </div>
                   <div>
-                    <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Recent Success</p>
-                    <p className="text-lg font-bold text-slate-800">Cooper reunited</p>
+                    <p className="text-lg font-bold text-slate-800">Smarter matching for faster reunions.</p>
                   </div>
                 </div>
               </div>
@@ -105,23 +109,56 @@ export function Dashboard() {
         </div>
       </section>
 
-      {/* 2. SEARCH: Integrated Experience */}
-      <section className="relative -mt-16 z-20 px-6 pb-24">
-        <div className="max-w-4xl mx-auto bg-white/90 backdrop-blur p-4 rounded-[2.5rem] shadow-lg border border-white/50">
-          <div className="flex flex-col md:flex-row items-center gap-2">
-            <div className="flex-1 flex items-center px-6 w-full">
-              <Search className="w-6 h-6 text-blue-400 mr-4" />
-              <input 
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search by breed, color, or location..."
-                className="w-full bg-transparent border-none focus:ring-0 text-lg py-4 placeholder:text-slate-400"
-              />
+      {/* 2. HOW IT WORKS: Three Step Process */}
+      <section className="relative z-20 px-6 py-24">
+        <div className="max-w-7xl mx-auto space-y-12">
+          <div className="text-center space-y-4">
+            <h2 className="text-4xl font-bold text-slate-900">How does PawScout work?</h2>
+            <p className="text-lg text-slate-600 max-w-2xl mx-auto">Three steps to help you stay on alert.</p>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {/* Step 1 */}
+            <div className="relative bg-white rounded-3xl p-8 shadow-lg border border-slate-100 hover:shadow-xl transition-shadow">
+              <div className="absolute -top-6 left-8 w-12 h-12 bg-amber-500 rounded-full flex items-center justify-center text-white font-bold text-lg">1</div>
+              <div className="pt-6 space-y-4">
+                <div className="flex justify-center mb-6">
+                  <UploadIcon className="w-12 h-12 text-amber-500" />
+                </div>
+                <h3 className="text-2xl font-bold text-slate-900 text-center">Report Your Pet</h3>
+                <p className="text-slate-600 text-center leading-relaxed">
+                  Upload a photo and details about your lost pet. Our AI automatically the image to identify key features and detect any possible matches.
+                </p>
+              </div>
             </div>
-            <button className="w-full md:w-auto px-10 py-4 bg-slate-900 text-white rounded-[1.8rem] font-bold hover:bg-blue-600 transition-all shadow-lg">
-              Analyze Area
-            </button>
+            
+            {/* Step 2 */}
+            <div className="relative bg-white rounded-3xl p-8 shadow-lg border border-slate-100 hover:shadow-xl transition-shadow">
+              <div className="absolute -top-6 left-8 w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold text-lg">2</div>
+              <div className="pt-6 space-y-4">
+                <div className="flex justify-center mb-6">
+                  <Sparkles className="w-12 h-12 text-blue-500" />
+                </div>
+                <h3 className="text-2xl font-bold text-slate-900 text-center"> Analysis & Matching</h3>
+                <p className="text-slate-600 text-center leading-relaxed">
+                  Our AI scans community reports to find potential matches in real-time.
+                </p>
+              </div>
+            </div>
+            
+            {/* Step 3 */}
+            <div className="relative bg-white rounded-3xl p-8 shadow-lg border border-slate-100 hover:shadow-xl transition-shadow">
+              <div className="absolute -top-6 left-8 w-12 h-12 bg-teal-500 rounded-full flex items-center justify-center text-white font-bold text-lg">3</div>
+              <div className="pt-6 space-y-4">
+                <div className="flex justify-center mb-6">
+                  <Heart className="w-12 h-12 text-teal-500" />
+                </div>
+                <h3 className="text-2xl font-bold text-slate-900 text-center">Matched?</h3>
+                <p className="text-slate-600 text-center leading-relaxed">
+                  We notify you of matches and help coordinate the reunion with your beloved pet.
+                </p>
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -135,7 +172,7 @@ export function Dashboard() {
               <p className="text-slate-500 font-medium">Real-time alerts from your neighborhood</p>
             </div>
             <Link href="/gallery" className="group flex items-center gap-2 font-bold text-blue-600 hover:text-blue-700">
-              View Map <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+              View All Pets
             </Link>
           </div>
 
@@ -146,6 +183,60 @@ export function Dashboard() {
           </div>
         </div>
       </div>
+
+      {/* 4. ARTICLES SECTION */}
+      <section className="bg-gradient-to-b from-white to-slate-50 py-24 px-6">
+        <div className="max-w-7xl mx-auto space-y-12">
+          <div className="text-center space-y-4">
+            <h2 className="text-4xl font-bold text-slate-900">Pet Safety Tips & Stories</h2>
+            <p className="text-lg text-slate-600 max-w-2xl mx-auto">Learn from success stories and expert advice</p>
+          </div>
+          
+          <div className= "grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-10">
+            {/* Article 1 */}
+            <article className="bg-white rounded-3xl overflow-hidden shadow-lg border border-slate-100 hover:shadow-xl transition-shadow group">
+              <div className="h-60 overflow-hidden relative">
+                <img src={article1image} alt="Pet preparation" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+              </div>
+              <div className="p-6 space-y-4">
+                <h3 className="text-xl font-bold text-slate-900">Prepare Before It Happens</h3>
+                <p className="text-slate-600 leading-relaxed">Keep clear photos of your pet, microchip information, and medical records ready. Being prepared can save precious time.</p>
+                <a href="https://www.google.com/maps/search/santa+cruz+animal+shelter" target="_blank" rel="noopener noreferrer" className="inline-block text-amber-600 font-semibold hover:text-amber-700 text-sm">
+                  Santa Cruz Animal Shelter →
+                </a>
+              </div>
+            </article>
+
+            {/* Article 2 */}
+            <article className="bg-white rounded-3xl overflow-hidden shadow-lg border border-slate-100 hover:shadow-xl transition-shadow group">
+              <div className="h-48 overflow-hidden relative">
+                <img src={article2image} alt="Happy reunited dog" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+              </div>
+              <div className="p-6 space-y-4">
+                <h3 className="text-xl font-bold text-slate-900">Success Story: Max's Journey</h3>
+                <p className="text-slate-600 leading-relaxed">A cat lost for 3 days was reunited with his family through social media. Read how it happened.</p>
+                <a href="https://www.google.com/maps/search/santa+cruz+dog+rescue+adoption" target="_blank" rel="noopener noreferrer" className="inline-block text-blue-600 font-semibold hover:text-blue-700 text-sm">
+                  Santa Cruz Animal Rescue →
+                </a>
+              </div>
+            </article>
+
+            {/* Article 3 */}
+            <article className="bg-white rounded-3xl overflow-hidden shadow-lg border border-slate-100 hover:shadow-xl transition-shadow group">
+              <div className="h-48 overflow-hidden relative">
+                <img src={article3image} alt="Community helping pets" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+              </div>
+              <div className="p-6 space-y-4">
+                <h3 className="text-xl font-bold text-slate-900">Community Help Matters</h3>
+                <p className="text-slate-600 leading-relaxed">Neighbors helped find Luna by sharing her photo. Discover how you can help pets in your community.</p>
+                <a href="https://www.google.com/maps/search/santa+cruz+cat+adoption" target="_blank" rel="noopener noreferrer" className="inline-block text-teal-600 font-semibold hover:text-teal-700 text-sm">
+                  Santa Cruz Adoption Center →
+                </a>
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
     </div>
   );
 }
