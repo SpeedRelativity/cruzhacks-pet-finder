@@ -11,6 +11,7 @@ import json
 from models import PetReport, PetTags, UserInfo, PetMatch
 from ai_service import analyze_pet_image
 from s3_config import upload_to_s3
+from email_service import send_match_notification
 from typing import Optional, List
 from datetime import datetime
 
@@ -204,6 +205,39 @@ async def find_matches(new_report: PetReport):
                     await match.insert()
                     matches_created += 1
                     print(f"   ✅ Match created! Score: {match_score}/3, Tags: {', '.join(matched_tags)}")
+                    
+                    # Send email notification to the person who reported the lost pet
+                    try:
+                        from bson import ObjectId
+                        lost_report = await PetReport.get(ObjectId(lost_id))
+                        found_report = await PetReport.get(ObjectId(found_id))
+                        
+                        if lost_report and found_report:
+                            # Get found pet image URL (first image)
+                            found_image_url = found_report.image_urls[0] if found_report.image_urls else None
+                            
+                            # Prepare match details
+                            match_details = {
+                                'matched_tags': matched_tags,
+                                'location': found_report.user_info.location
+                            }
+                            
+                            # Send email to lost pet owner
+                            email_sent = await send_match_notification(
+                                recipient_email=lost_report.user_info.email,
+                                recipient_name=lost_report.user_info.name,
+                                pet_name=lost_report.pet_name or "your pet",
+                                found_pet_image_url=found_image_url,
+                                match_details=match_details
+                            )
+                            
+                            if email_sent:
+                                print(f"   📧 Email notification sent to {lost_report.user_info.email}")
+                            else:
+                                print(f"   ⚠️ Email notification could not be sent (check email configuration)")
+                    except Exception as email_err:
+                        print(f"   ⚠️ Error sending email notification: {str(email_err)}")
+                        # Don't fail the match creation if email fails
         
         if matches_created > 0:
             print(f"🎉 Created {matches_created} new match(es)!")
