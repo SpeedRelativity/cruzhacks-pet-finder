@@ -1,15 +1,87 @@
 'use client';
 
-import { useState } from 'react';
-import { Search, Upload, TrendingUp, Clock, MapPin, Calendar } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Search, Upload, TrendingUp, Clock, MapPin, Calendar, CheckCircle2, ChevronLeft, ChevronRight } from 'lucide-react';
 import { WhiskerLoader } from './WhiskerLoader';
 import { Badge } from './Badge';
 import Link from 'next/link';
 const heroImageSrc = '/images/hero.jpg';
 
+interface RecentMatch {
+  match_id: string;
+  lost_report: {
+    pet_name: string;
+    pet_type: string;
+    image_urls: string[];
+    location: string;
+    tags: {
+      breed: string;
+      primary_color: string;
+    };
+  };
+  found_report: {
+    pet_name: string;
+    pet_type: string;
+    image_urls: string[];
+    location: string;
+    tags: {
+      breed: string;
+      primary_color: string;
+    };
+  };
+  created_at: string;
+  decision_made_at: string;
+}
+
 export function Dashboard() {
   const [isSearching, setIsSearching] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [recentMatches, setRecentMatches] = useState<RecentMatch[]>([]);
+  const [matchesLoading, setMatchesLoading] = useState(true);
+  const [currentMatchIndex, setCurrentMatchIndex] = useState(0);
+  const [swipeDirection, setSwipeDirection] = useState<'left' | 'right' | null>(null);
+
+  useEffect(() => {
+    fetchRecentMatches();
+  }, []);
+
+  const fetchRecentMatches = async () => {
+    try {
+      setMatchesLoading(true);
+      const response = await fetch('http://localhost:8000/api/matches?status=accepted&limit=20');
+      
+      if (response.ok) {
+        const data = await response.json();
+        if (data.status === 'success') {
+          // Filter for cats only
+          const catMatches = (data.matches || []).filter((match: RecentMatch) => 
+            match.found_report.pet_type.toLowerCase() === 'cat' || 
+            match.lost_report.pet_type.toLowerCase() === 'cat'
+          );
+          setRecentMatches(catMatches);
+          setCurrentMatchIndex(0);
+        }
+      }
+    } catch (error) {
+      console.error('Failed to fetch recent matches:', error);
+    } finally {
+      setMatchesLoading(false);
+    }
+  };
+
+  const handleSwipe = (direction: 'left' | 'right') => {
+    if (recentMatches.length === 0) return;
+    
+    setSwipeDirection(direction);
+    setTimeout(() => {
+      if (direction === 'left') {
+        setCurrentMatchIndex((prev) => (prev + 1) % recentMatches.length);
+      } else {
+        setCurrentMatchIndex((prev) => (prev - 1 + recentMatches.length) % recentMatches.length);
+      }
+      setSwipeDirection(null);
+    }, 300);
+  };
 
   const handleSearch = () => {
     if (searchQuery) {
@@ -158,28 +230,33 @@ export function Dashboard() {
         <section className="space-y-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <TrendingUp className="w-6 h-6 text-secondary" />
-              <h2 className="text-2xl font-bold">User Reports</h2>
+              <div className="p-2 bg-secondary/10 rounded-xl">
+                <TrendingUp className="w-6 h-6 text-secondary" />
+              </div>
+              <h2 className="text-2xl font-bold text-foreground">User Reports</h2>
             </div>
-            <button className="text-secondary font-medium hover:underline">View all →</button>
+            <Link href="/gallery" className="text-secondary font-medium hover:underline flex items-center gap-1">
+              View all <span>→</span>
+            </Link>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {userReports.map((report) => (
               <div key={report.id} className="group cursor-pointer">
-                <div className="relative overflow-hidden rounded-2xl bg-card backdrop-blur-xl border border-border shadow-lg hover:shadow-xl transition-all hover:scale-[1.02]">
+                <div className="relative overflow-hidden rounded-2xl bg-card backdrop-blur-xl border border-border shadow-lg hover:shadow-xl transition-all hover:scale-[1.02] hover:border-primary/30">
                   <div className="relative h-64 overflow-hidden">
-                    <img src={report.image} alt={report.name} className="w-full h-full object-cover" />
+                    <img src={report.image} alt={report.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                     <div className="absolute top-3 left-3">
                       <Badge variant={report.status}>{report.status}</Badge>
                     </div>
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
                   </div>
                   <div className="p-5 space-y-3">
-                    <h3 className="text-lg font-semibold text-foreground">{report.name}</h3>
-                    <p className="text-sm text-muted">{report.type}</p>
+                    <h3 className="text-lg font-semibold text-foreground group-hover:text-primary transition-colors">{report.name}</h3>
+                    <p className="text-sm text-muted-foreground">{report.type}</p>
                     <div className="flex flex-wrap gap-2">
                       {report.tags.map((tag) => (
-                        <span key={tag} className="px-2 py-1 bg-secondary text-white text-xs font-medium rounded-lg">
+                        <span key={tag} className="px-2 py-1 bg-secondary/10 text-secondary text-xs font-medium rounded-lg border border-secondary/20">
                           {tag}
                         </span>
                       ))}
@@ -206,50 +283,127 @@ export function Dashboard() {
           </svg>
         </div>
 
-        {/* Scraped Social Matches Section */}
+        {/* Recent Matched Cats Section with Swiping */}
         <section className="space-y-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <Clock className="w-6 h-6 text-accent" />
-              <h2 className="text-2xl font-bold">Recent Matches</h2>
+              <div className="p-2 bg-accent/10 rounded-xl">
+                <CheckCircle2 className="w-6 h-6 text-accent" />
+              </div>
+              <h2 className="text-2xl font-bold text-foreground">Recent Matched Cats</h2>
             </div>
-            <button className="text-accent font-medium hover:underline">View all →</button>
+            <button 
+              onClick={() => {
+                const event = new CustomEvent('navigateToMatches', { detail: 'matches' });
+                window.dispatchEvent(event);
+              }}
+              className="text-accent font-medium hover:underline flex items-center gap-1"
+            >
+              View all <span>→</span>
+            </button>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {scrapedMatches.map((match) => (
-              <div key={match.id} className="group cursor-pointer">
-                <div className="relative overflow-hidden rounded-2xl bg-card backdrop-blur-xl border border-border shadow-lg hover:shadow-xl transition-all hover:scale-[1.02]">
-                  <div className="relative h-64 overflow-hidden">
-                    <img src={match.image} alt={match.description} className="w-full h-full object-cover" />
-                    <div className="absolute top-3 left-3 flex gap-2">
-                      <div className="px-3 py-1 bg-primary rounded-lg flex items-center gap-1">
-                        <span className="text-white font-bold text-sm">{match.confidence}%</span>
+          {matchesLoading ? (
+            <div className="flex justify-center py-12">
+              <WhiskerLoader />
+            </div>
+          ) : recentMatches.length > 0 ? (
+            <div className="relative">
+              {/* Swipeable Match Card */}
+              <div className="relative max-w-2xl mx-auto">
+                <div 
+                  className={`relative overflow-hidden rounded-3xl bg-card backdrop-blur-xl border-2 border-accent/30 shadow-2xl transition-all duration-300 transform hover:border-accent/50 ${
+                    swipeDirection === 'left' ? 'animate-slide-out-left' : swipeDirection === 'right' ? 'animate-slide-out-right' : ''
+                  }`}
+                >
+                  {recentMatches[currentMatchIndex] && (
+                    <>
+                      <div className="relative h-96 overflow-hidden">
+                        <img 
+                          src={recentMatches[currentMatchIndex].found_report.image_urls?.[0] || '/images/hero.jpg'} 
+                          alt={recentMatches[currentMatchIndex].found_report.pet_name || 'Matched cat'} 
+                          className="w-full h-full object-cover"
+                          onError={(e) => {
+                            (e.target as HTMLImageElement).src = '/images/hero.jpg';
+                          }}
+                        />
+                        <div className="absolute top-4 right-4">
+                          <span className="px-4 py-2 bg-accent text-accent-foreground rounded-full text-sm font-semibold flex items-center gap-2 shadow-lg">
+                            <CheckCircle2 className="w-4 h-4" />
+                            MATCHED
+                          </span>
+                        </div>
+                        {/* Swipe Navigation Arrows */}
+                        {recentMatches.length > 1 && (
+                          <>
+                            <button
+                              onClick={() => handleSwipe('right')}
+                              className="absolute left-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-3 rounded-full transition-all shadow-lg hover:scale-110"
+                              aria-label="Previous match"
+                            >
+                              <ChevronLeft className="w-6 h-6" />
+                            </button>
+                            <button
+                              onClick={() => handleSwipe('left')}
+                              className="absolute right-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-3 rounded-full transition-all shadow-lg hover:scale-110"
+                              aria-label="Next match"
+                            >
+                              <ChevronRight className="w-6 h-6" />
+                            </button>
+                          </>
+                        )}
+                        {/* Match Counter */}
+                        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-black/70 text-white px-4 py-2 rounded-full text-sm font-medium">
+                          {currentMatchIndex + 1} / {recentMatches.length}
+                        </div>
                       </div>
-                    </div>
-                  </div>
-                  <div className="p-5 space-y-3">
-                    <p className="text-sm text-foreground font-medium">{match.description}</p>
-                    <div className="flex flex-wrap gap-2">
-                      {match.tags.map((tag) => (
-                        <span key={tag} className="px-2 py-1 bg-secondary text-white text-xs font-medium rounded-lg">
-                          {tag}
-                        </span>
-                      ))}
-                    </div>
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                      <MapPin className="w-4 h-4 text-accent" />
-                      <span>{match.location}</span>
-                    </div>
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                      <Clock className="w-4 h-4 text-accent" />
-                      <span>{match.date}</span>
-                    </div>
-                  </div>
+                      <div className="p-6 space-y-4">
+                        <div>
+                          <h3 className="text-2xl font-bold text-foreground mb-1">
+                            {recentMatches[currentMatchIndex].lost_report.pet_name || 'Unknown'} ↔ {recentMatches[currentMatchIndex].found_report.pet_name || 'Unknown'}
+                          </h3>
+                          <p className="text-muted-foreground">Perfect Match - Cat Reunited!</p>
+                        </div>
+                        <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                          <div className="flex items-center gap-2">
+                            <MapPin className="w-4 h-4 text-accent" />
+                            <span>{recentMatches[currentMatchIndex].found_report.location}</span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <Clock className="w-4 h-4 text-accent" />
+                            <span>{new Date(recentMatches[currentMatchIndex].decision_made_at || recentMatches[currentMatchIndex].created_at).toLocaleDateString()}</span>
+                          </div>
+                        </div>
+                        <div className="flex flex-wrap gap-2 pt-2">
+                          <span className="px-3 py-1.5 bg-primary/20 text-primary text-sm font-medium rounded-lg">
+                            {recentMatches[currentMatchIndex].found_report.tags.breed}
+                          </span>
+                          <span className="px-3 py-1.5 bg-primary/20 text-primary text-sm font-medium rounded-lg">
+                            {recentMatches[currentMatchIndex].found_report.tags.primary_color}
+                          </span>
+                        </div>
+                      </div>
+                    </>
+                  )}
                 </div>
               </div>
-            ))}
-          </div>
+              {/* Swipe Hint */}
+              {recentMatches.length > 1 && (
+                <p className="text-center text-sm text-muted-foreground mt-4">
+                  Swipe or use arrows to see more matched cats
+                </p>
+              )}
+            </div>
+          ) : (
+            <div className="text-center py-16 bg-card rounded-2xl border border-border">
+              <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-muted/20 flex items-center justify-center">
+                <Clock className="w-10 h-10 text-muted" />
+              </div>
+              <h3 className="text-xl font-semibold text-foreground mb-2">Currently No More Matches</h3>
+              <p className="text-muted-foreground mb-4">No matched cats to display right now.</p>
+              <p className="text-sm text-muted-foreground">Check back later or accept a cat match to see it here!</p>
+            </div>
+          )}
         </section>
       </div>
     </div>

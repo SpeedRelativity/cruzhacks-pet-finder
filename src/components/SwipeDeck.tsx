@@ -13,23 +13,32 @@ export const SwipeDeck = () => {
     useEffect(() => {
         const fetchPets = async () => {
             try {
-                const response = await fetch('http://localhost:8000/api/reports');
+                const response = await fetch('http://localhost:8000/api/reports?status=active&limit=50');
+                
+                if (!response.ok) {
+                    throw new Error(`Failed to fetch pets: ${response.statusText}`);
+                }
+                
                 const data = await response.json();
 
-                // Map backend data to frontend Pet interface
-                const mappedPets: Pet[] = data.map((report: any) => ({
-                    id: report._id,
-                    name: report.pet_name,
-                    species: report.tags.species,
-                    breed: report.tags.breed,
-                    age: report.tags.age_group,
-                    image_url: report.image_urls?.[0] || 'https://images.unsplash.com/photo-1552053831-71594a27632d?q=80',
-                    report_type: report.report_type,
-                    tags: [...(report.tags.marks || []), report.tags.primary_color],
-                    distance_miles: Math.floor(Math.random() * 10) + 1 // Mock distance for now
-                }));
+                if (data.status === 'success' && data.reports) {
+                    // Map backend data to frontend Pet interface
+                    const mappedPets: Pet[] = data.reports.map((report: any) => ({
+                        id: report.report_id,
+                        name: report.pet_name || 'Unknown',
+                        species: report.tags?.species || 'Unknown',
+                        breed: report.tags?.breed || 'Unknown',
+                        age: report.tags?.age_group || 'Unknown',
+                        image_url: report.image_urls?.[0] || 'https://images.unsplash.com/photo-1552053831-71594a27632d?q=80',
+                        report_type: report.report_type || 'Lost',
+                        tags: [...(report.tags?.marks || []), report.tags?.primary_color].filter(Boolean),
+                        distance_miles: Math.floor(Math.random() * 10) + 1 // Mock distance for now
+                    }));
 
-                setPets(mappedPets);
+                    setPets(mappedPets.length > 0 ? mappedPets : MOCK_PETS);
+                } else {
+                    throw new Error('Invalid API response');
+                }
             } catch (error) {
                 console.error("Failed to fetch pets:", error);
                 setPets(MOCK_PETS); // Fallback to mock data on error
