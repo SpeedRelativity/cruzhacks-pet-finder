@@ -2,12 +2,12 @@
 
 import { useUser } from '@auth0/nextjs-auth0/client';
 import Link from 'next/link';
-import { Home, Heart, Map, Bell, Grid3x3, Plus } from 'lucide-react';
+import { Home, Heart, Bell, Grid3x3, Plus } from 'lucide-react';
 
 // 1. Define the Prop Types
 interface NavigationProps {
-  currentPage: 'dashboard' | 'swipe' | 'map' | 'alerts' | 'gallery';
-  onNavigate: (page: 'dashboard' | 'swipe' | 'map' | 'alerts' | 'gallery') => void;
+  currentPage: 'dashboard' | 'swipe' | 'alerts' | 'gallery';
+  onNavigate: (page: 'dashboard' | 'swipe' | 'alerts' | 'gallery') => void;
 }
 
 // 2. Accept props in the function
@@ -21,7 +21,6 @@ export function Navigation({ currentPage, onNavigate }: NavigationProps) {
     { id: 'dashboard', icon: Home, label: 'Home' },
     { id: 'swipe', icon: Heart, label: 'Matches' },
     { id: 'gallery', icon: Grid3x3, label: 'Gallery' },
-    { id: 'map', icon: Map, label: 'Map' },
     { id: 'alerts', icon: Bell, label: 'Alerts' },
   ] as const;
 

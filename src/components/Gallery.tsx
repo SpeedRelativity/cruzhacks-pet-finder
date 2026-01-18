@@ -33,6 +33,7 @@ interface ApiReport {
   location: string;
   description: string | null;
   status: string;
+  is_matched?: boolean;  // True if this report has an accepted match
   created_at: string;
 }
 
@@ -96,24 +97,38 @@ export function Gallery() {
       const data = await response.json();
       
       if (data.status === 'success') {
-        // Map API response to Pet interface
-        const mappedPets: Pet[] = data.reports.map((report: ApiReport) => ({
-          id: report.report_id,
-          name: report.pet_name || 'Unknown',
-          type: report.pet_type.toLowerCase(),
-          breed: report.tags.breed || 'Unknown',
-          status: report.status === 'found' ? 'found' : report.report_type.toLowerCase(), // Use status='found' if matched, otherwise report_type
-          location: report.location || 'Unknown',
-          date: new Date(report.created_at).toLocaleDateString('en-US', { 
-            month: 'short', 
-            day: 'numeric', 
-            year: 'numeric' 
-          }),
-          image: report.image_urls && report.image_urls.length > 0 
-            ? report.image_urls[0] 
-            : '/images/hero.jpg', // Fallback image
-          description: report.description || `A ${report.tags.breed || report.pet_type} ${report.tags.primary_color ? `with ${report.tags.primary_color} coloring` : ''}`
-        }));
+        // Map API response to Pet interface, filtering out map images
+        const mappedPets: Pet[] = data.reports
+          .filter((report: ApiReport) => {
+            // Filter out reports with map images
+            if (report.image_urls && report.image_urls.length > 0) {
+              const imageUrl = report.image_urls[0].toLowerCase();
+              // Skip if image URL contains 'map' or if AI detected it as a map/non-pet
+              if (imageUrl.includes('map') || 
+                  (report.tags && (report.tags.species?.toLowerCase().includes('map') || 
+                                   report.description?.toLowerCase().includes('map')))) {
+                return false;
+              }
+            }
+            return true;
+          })
+          .map((report: ApiReport) => ({
+            id: report.report_id,
+            name: report.pet_name || 'Unknown',
+            type: report.pet_type.toLowerCase(),
+            breed: report.tags.breed || 'Unknown',
+            status: report.is_matched ? 'matched' : report.report_type.toLowerCase(), // Use 'matched' if has accepted match, otherwise report_type
+            location: report.location || 'Unknown',
+            date: new Date(report.created_at).toLocaleDateString('en-US', { 
+              month: 'short', 
+              day: 'numeric', 
+              year: 'numeric' 
+            }),
+            image: report.image_urls && report.image_urls.length > 0 
+              ? report.image_urls[0] 
+              : '/images/hero.jpg', // Fallback image
+            description: report.description || `A ${report.tags.breed || report.pet_type} ${report.tags.primary_color ? `with ${report.tags.primary_color} coloring` : ''}`
+          }));
 
         setPets(mappedPets);
       } else {
@@ -140,6 +155,8 @@ export function Gallery() {
     const statusLower = status.toLowerCase();
     if (statusLower === 'missing' || statusLower === 'lost') {
       return 'bg-secondary';
+    } else if (statusLower === 'matched') {
+      return 'bg-accent';
     } else if (statusLower === 'found') {
       return 'bg-primary';
     } else if (statusLower === 'stray') {
@@ -150,10 +167,14 @@ export function Gallery() {
 
   const getStatusLabel = (status: string) => {
     const statusLower = status.toLowerCase();
-    if (statusLower === 'lost' || statusLower === 'missing') {
+    if (statusLower === 'missing' || statusLower === 'lost') {
       return 'Missing';
+    } else if (statusLower === 'matched') {
+      return 'Matched';
+    } else if (statusLower === 'found') {
+      return 'Found';
     }
-    return status.charAt(0).toUpperCase() + status.slice(1);
+    return 'Stray';
   };
 
   return (
@@ -333,13 +354,13 @@ export function Gallery() {
                             (e.target as HTMLImageElement).src = '/images/hero.jpg';
                           }}
                         />
-                        {/* FOUND Badge Overlay */}
-                        {pet.status === 'found' && (
+                        {/* MATCHED Badge Overlay - only show if matched */}
+                        {pet.status === 'matched' && (
                           <div className="absolute top-0 left-0 right-0 bg-gradient-to-r from-green-500 to-green-600 text-white text-center py-2.5 px-4 font-bold text-sm shadow-lg z-10">
-                            ✓ FOUND
+                            ✓ MATCHED
                           </div>
                         )}
-                        <div className={`absolute ${pet.status === 'found' ? 'top-12' : 'top-3'} left-3`}>
+                        <div className={`absolute ${pet.status === 'matched' ? 'top-12' : 'top-3'} left-3`}>
                           <span className={`${getStatusColor(pet.status)} text-white rounded-full px-3 py-1 text-xs font-semibold`}>
                             {getStatusLabel(pet.status)}
                           </span>
@@ -378,10 +399,10 @@ export function Gallery() {
                               (e.target as HTMLImageElement).src = '/images/hero.jpg';
                             }}
                           />
-                          {/* FOUND Badge Overlay for List View */}
-                          {pet.status === 'found' && (
+                          {/* MATCHED Badge Overlay for List View - only show if matched */}
+                          {pet.status === 'matched' && (
                             <div className="absolute top-0 left-0 right-0 bg-gradient-to-r from-green-500 to-green-600 text-white text-center py-1 px-2 font-bold text-xs shadow-lg z-10">
-                              ✓ FOUND
+                              ✓ MATCHED
                             </div>
                           )}
                         </div>

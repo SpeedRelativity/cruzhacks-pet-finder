@@ -318,9 +318,12 @@ async def create_report(
         await new_report.insert()
         print(f"   ✅ Saved to MongoDB with ID: {new_report.id}")
         
-        # 7. Find matches with existing reports
-        print("5. Searching for matches...")
-        await find_matches(new_report)
+        # 7. Find matches with existing reports (skip for scraper_bot to prevent auto-matching)
+        if new_report.user_id != "scraper_bot":
+            print("5. Searching for matches...")
+            await find_matches(new_report)
+        else:
+            print("5. Skipping match search for scraper_bot reports")
         
         # 8. Return success response with all data
         return {
@@ -394,8 +397,18 @@ async def get_reports(
                 if search_lower not in searchable_text:
                     continue  # Skip this report if it doesn't match search
             
+            # Check if this report has been matched (has an accepted match)
+            report_id_str = str(report.id)
+            has_accepted_match = await PetMatch.find_one({
+                "$or": [
+                    {"lost_report_id": report_id_str},
+                    {"found_report_id": report_id_str}
+                ],
+                "status": "accepted"
+            }) is not None
+            
             result.append({
-                "report_id": str(report.id),
+                "report_id": report_id_str,
                 "report_type": report.report_type,
                 "pet_name": report.pet_name or "Unknown",
                 "pet_type": report.pet_type,
@@ -412,6 +425,7 @@ async def get_reports(
                 "location": report.user_info.location,
                 "description": report.description or "",
                 "status": report.status,
+                "is_matched": has_accepted_match,  # True if this report has an accepted match
                 "created_at": report.created_at.isoformat()
             })
         

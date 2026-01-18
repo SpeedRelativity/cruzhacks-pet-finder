@@ -5,19 +5,18 @@ import { useSearchParams } from 'next/navigation';
 import { Navigation } from '../components/Navigation';
 import { Dashboard } from '../components/Dashboard';
 import { SwipeMatch } from '../components/SwipeMatch';
-import { DiscoveryMap } from '../components/DiscoveryMap';
 import { Alerts } from '../components/Alerts';
 import { Gallery } from '../components/Gallery';
 
 function AppContent() {
   const searchParams = useSearchParams();
-  const [currentPage, setCurrentPage] = useState<'dashboard' | 'swipe' | 'map' | 'alerts' | 'gallery'>('dashboard');
+  const [currentPage, setCurrentPage] = useState<'dashboard' | 'swipe' | 'alerts' | 'gallery'>('dashboard');
 
   // Handle URL query parameter for navigation
   useEffect(() => {
     const pageParam = searchParams.get('page');
-    if (pageParam && ['dashboard', 'swipe', 'map', 'alerts', 'gallery'].includes(pageParam)) {
-      setCurrentPage(pageParam as 'dashboard' | 'swipe' | 'map' | 'alerts' | 'gallery');
+    if (pageParam && ['dashboard', 'swipe', 'alerts', 'gallery'].includes(pageParam)) {
+      setCurrentPage(pageParam as 'dashboard' | 'swipe' | 'alerts' | 'gallery');
     }
   }, [searchParams]);
 
@@ -42,7 +41,6 @@ function AppContent() {
       {currentPage === 'dashboard' && <Dashboard />}
       {currentPage === 'swipe' && <SwipeMatch />}
       {currentPage === 'gallery' && <Gallery />}
-      {currentPage === 'map' && <DiscoveryMap />}
       {currentPage === 'alerts' && <Alerts />}
     </div>
   );
