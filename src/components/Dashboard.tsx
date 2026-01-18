@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { Search, Upload, TrendingUp, Clock, MapPin, Calendar } from 'lucide-react';
 import { WhiskerLoader } from './WhiskerLoader';
 import { Badge } from './Badge';
+import Link from 'next/link';
 const heroImageSrc = '/images/hero.jpg';
 
 export function Dashboard() {
@@ -80,15 +81,15 @@ export function Dashboard() {
         {/* Hero Image Container */}
         <div className="relative w-full h-[600px] overflow-hidden">
           {/* Background Image */}
-          <img 
+          <img
             src={heroImageSrc}
-            alt="Happy dog and cat together" 
+            alt="Happy dog and cat together"
             className="w-full h-full object-cover"
           />
-          
+
           {/* Gradient Overlay */}
           <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/40 to-transparent"></div>
-          
+
           {/* Content Overlay */}
           <div className="absolute inset-0 flex items-center">
             <div className="max-w-7xl mx-auto px-6 w-full">
@@ -99,9 +100,9 @@ export function Dashboard() {
                 <p className="text-lg lg:text-xl text-white/90 leading-relaxed">
                   Powered matching connects lost pets with their families using social media and community reports
                 </p>
-                <button className="px-8 py-4 bg-primary text-primary-foreground rounded-2xl font-semibold text-lg hover:opacity-90 transition-opacity shadow-primary inline-flex items-center gap-2">
+                <Link href="/upload" className="px-8 py-4 bg-primary text-primary-foreground rounded-2xl font-semibold text-lg hover:opacity-90 transition-opacity shadow-primary inline-flex items-center gap-2">
                   Report Lost Pet
-                </button>
+                </Link>
               </div>
             </div>
           </div>
@@ -125,11 +126,10 @@ export function Dashboard() {
                   placeholder="Describe your pet or upload a photo..."
                   className="flex-1 bg-transparent border-none outline-none text-foreground placeholder:text-muted py-3"
                 />
-                <label className="flex items-center gap-2 px-4 py-2.5 bg-secondary rounded-xl cursor-pointer hover:opacity-90 transition-opacity">
+                <Link href="/upload" className="flex items-center gap-2 px-4 py-2.5 bg-secondary rounded-xl cursor-pointer hover:opacity-90 transition-opacity">
                   <Upload className="w-4 h-4 text-white" />
                   <span className="text-sm font-medium text-white">Upload</span>
-                  <input type="file" className="hidden" accept="image/*" />
-                </label>
+                </Link>
                 <button
                   onClick={handleSearch}
                   className="px-6 py-2.5 bg-primary text-primary-foreground rounded-xl font-semibold hover:opacity-90 transition-opacity shadow-primary"

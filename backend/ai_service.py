@@ -6,8 +6,9 @@ import re
 
 load_dotenv()
 
-#Hardcoding (bug here)
-api_key = "AIzaSy...9ENE" 
+api_key = os.getenv("GEMINI_API_KEY")
+if not api_key:
+    print("⚠️ WARNING: GEMINI_API_KEY not found in environment variables")
 genai.configure(api_key=api_key)
 
 async def analyze_pet_image(image_bytes: bytes):

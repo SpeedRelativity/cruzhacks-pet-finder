@@ -125,6 +125,16 @@ async def create_report(
         print(f"❌ CRITICAL ERROR: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
+@app.get("/api/reports")
+async def get_reports():
+    """Fetch all pet reports from MongoDB"""
+    try:
+        reports = await PetReport.find_all().to_list()
+        return reports
+    except Exception as e:
+        print(f"❌ DATABASE ERROR: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 
 if __name__ == "__main__":
     import uvicorn

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { X, Heart, Info, MapPin, Calendar, Sparkles, Mail } from 'lucide-react';
 
 interface Pet {
@@ -16,58 +16,19 @@ interface Pet {
   }>;
 }
 
-const mockPets: Pet[] = [
-  {
-    id: 1,
-    image: 'https://images.unsplash.com/photo-1552053831-71594a27632d?w=800&h=800&fit=crop',
-    userImage: 'https://images.unsplash.com/photo-1633722715463-d30f4f325e24?w=800&h=800&fit=crop',
-    description: 'Found wandering near Prospect Park. Very friendly, has red collar.',
-    location: 'Brooklyn, NY',
-    date: '2 hours ago',
-    confidence: 92,
-    tags: [
-      { category: 'Breed', value: 'Golden Retriever', match: true },
-      { category: 'Primary Color', value: 'Golden', match: true },
-      { category: 'Markings', value: 'White chest patch', match: true },
-      { category: 'Collar', value: 'Red', match: true },
-      { category: 'Size', value: 'Large', match: true },
-    ],
-  },
-  {
-    id: 2,
-    image: 'https://images.unsplash.com/photo-1574158622682-e40e69881006?w=800&h=800&fit=crop',
-    userImage: 'https://images.unsplash.com/photo-1573865526739-10c1dd7be1f9?w=800&h=800&fit=crop',
-    description: 'Orange tabby found near subway station. No collar but very friendly.',
-    location: 'Manhattan, NY',
-    date: '4 hours ago',
-    confidence: 87,
-    tags: [
-      { category: 'Breed', value: 'Domestic Shorthair', match: true },
-      { category: 'Primary Color', value: 'Orange', match: true },
-      { category: 'Markings', value: 'Tabby stripes', match: true },
-      { category: 'Eyes', value: 'Green', match: false },
-      { category: 'Size', value: 'Medium', match: true },
-    ],
-  },
-  {
-    id: 3,
-    image: 'https://images.unsplash.com/photo-1543466835-00a7907e9de1?w=800&h=800&fit=crop',
-    userImage: 'https://images.unsplash.com/photo-1505628346881-b72b27e84530?w=800&h=800&fit=crop',
-    description: 'Small beagle found in park. Wearing blue tag but unable to read.',
-    location: 'Queens, NY',
-    date: '6 hours ago',
-    confidence: 78,
-    tags: [
-      { category: 'Breed', value: 'Beagle', match: true },
-      { category: 'Primary Color', value: 'Tricolor', match: true },
-      { category: 'Markings', value: 'White paws', match: true },
-      { category: 'Size', value: 'Small', match: false },
-      { category: 'Tag', value: 'Blue', match: true },
-    ],
-  },
-];
+// Removed mockPets constant
 
+/*
+const mockPets: Pet[] = [
+  // ... kept for reference if needed
+];
+*/
+
+// Inside SwipeMatch component
 export function SwipeMatch() {
+  const [pets, setPets] = useState<Pet[]>([]);
+  const [loading, setLoading] = useState(true);
+
   const [currentIndex, setCurrentIndex] = useState(0);
   const [showComparison, setShowComparison] = useState(false);
   const [showConfidence, setShowConfidence] = useState(false);
@@ -77,7 +38,42 @@ export function SwipeMatch() {
   const [contactEmail, setContactEmail] = useState('');
   const [contactMessage, setContactMessage] = useState('');
 
-  const currentPet = mockPets[currentIndex];
+  useEffect(() => {
+    const fetchPets = async () => {
+      try {
+        const response = await fetch('http://localhost:8000/api/reports');
+        const data = await response.json();
+
+        // Map backend data to frontend Pet interface
+        const mappedPets: Pet[] = data.map((report: any) => ({
+          id: report._id,
+          image: report.image_urls?.[0] || 'https://images.unsplash.com/photo-1552053831-71594a27632d?q=80',
+          userImage: 'https://images.unsplash.com/photo-1633722715463-d30f4f325e24?w=800&h=800&fit=crop', // Placeholder for now
+          description: report.description || `Found ${report.pet_type} named ${report.pet_name}`,
+          location: report.user_info?.location || 'Unknown Location',
+          date: new Date(report.created_at || Date.now()).toLocaleDateString(),
+          confidence: Math.floor(Math.random() * 20) + 80, // Mock confidence for now
+          tags: [
+            { category: 'Species', value: report.tags.species, match: true },
+            { category: 'Breed', value: report.tags.breed, match: true },
+            { category: 'Color', value: report.tags.primary_color, match: true },
+            ...(report.tags.marks || []).map((mark: string) => ({ category: 'Marking', value: mark, match: true }))
+          ]
+        }));
+
+        setPets(mappedPets);
+      } catch (error) {
+        console.error("Failed to fetch pets:", error);
+        // Fallback or empty state
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPets();
+  }, []);
+
+  const currentPet = pets[currentIndex];
 
   const handleSwipe = (direction: 'left' | 'right') => {
     if (direction === 'right') {
@@ -86,16 +82,15 @@ export function SwipeMatch() {
       setTimeout(() => {
         setShowConfidence(false);
         // Navigate to next or show success
-        if (currentIndex < mockPets.length - 1) {
+        if (currentIndex < pets.length - 1) {
           setCurrentIndex(currentIndex + 1);
         } else {
-          // Could show "no more matches" screen
           setCurrentIndex(0);
         }
       }, 2000);
     } else {
       // Just move to next
-      if (currentIndex < mockPets.length - 1) {
+      if (currentIndex < pets.length - 1) {
         setCurrentIndex(currentIndex + 1);
       } else {
         setCurrentIndex(0);
@@ -103,6 +98,14 @@ export function SwipeMatch() {
     }
     setDragOffset({ x: 0, y: 0 });
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background pt-24 pb-12 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mb-4"></div>
+      </div>
+    );
+  }
 
   if (!currentPet) {
     return (
@@ -128,19 +131,19 @@ export function SwipeMatch() {
         <div className="mb-6">
           <div className="flex justify-between items-center mb-2">
             <span className="text-sm text-muted">Reviewing matches</span>
-            <span className="text-sm font-medium text-primary">{currentIndex + 1} / {mockPets.length}</span>
+            <span className="text-sm font-medium text-primary">{currentIndex + 1} / {pets.length}</span>
           </div>
           <div className="h-2 bg-primary-light rounded-full overflow-hidden">
-            <div 
+            <div
               className="h-full bg-primary transition-all duration-300"
-              style={{ width: `${((currentIndex + 1) / mockPets.length) * 100}%` }}
+              style={{ width: `${((currentIndex + 1) / pets.length) * 100}%` }}
             ></div>
           </div>
         </div>
 
         {/* Main Card */}
         <div className="relative mb-8">
-          <div 
+          <div
             className={`relative transition-transform duration-300 ${isDragging ? 'cursor-grabbing' : 'cursor-grab'}`}
             style={{
               transform: `translate(${dragOffset.x}px, ${dragOffset.y}px) rotate(${dragOffset.x * 0.05}deg)`,
@@ -150,9 +153,9 @@ export function SwipeMatch() {
             <div className="relative overflow-hidden rounded-3xl bg-white border border-border shadow-2xl">
               {/* Image Section */}
               <div className="relative">
-                <img 
-                  src={currentPet.image} 
-                  alt="Found pet" 
+                <img
+                  src={currentPet.image}
+                  alt="Found pet"
                   className="w-full h-[500px] object-cover"
                 />
 
@@ -191,11 +194,10 @@ export function SwipeMatch() {
                     {currentPet.tags.map((tag, index) => (
                       <div
                         key={index}
-                        className={`px-3 py-2 rounded-xl text-sm font-medium transition-all ${
-                          tag.match
-                            ? 'bg-primary text-white shadow-sm'
-                            : 'bg-gray-100 text-gray-600'
-                        }`}
+                        className={`px-3 py-2 rounded-xl text-sm font-medium transition-all ${tag.match
+                          ? 'bg-primary text-white shadow-sm'
+                          : 'bg-gray-100 text-gray-600'
+                          }`}
                       >
                         <span className="font-semibold">{tag.category}:</span> {tag.value}
                       </div>
@@ -207,19 +209,17 @@ export function SwipeMatch() {
           </div>
 
           {/* Swipe Indicators */}
-          <div 
-            className={`absolute top-1/4 left-8 transition-opacity ${
-              dragOffset.x < -50 ? 'opacity-100' : 'opacity-0'
-            }`}
+          <div
+            className={`absolute top-1/4 left-8 transition-opacity ${dragOffset.x < -50 ? 'opacity-100' : 'opacity-0'
+              }`}
           >
             <div className="bg-red-500 text-white px-6 py-3 rounded-2xl font-bold text-2xl rotate-[-15deg] shadow-xl border-4 border-white">
               SKIP
             </div>
           </div>
-          <div 
-            className={`absolute top-1/4 right-8 transition-opacity ${
-              dragOffset.x > 50 ? 'opacity-100' : 'opacity-0'
-            }`}
+          <div
+            className={`absolute top-1/4 right-8 transition-opacity ${dragOffset.x > 50 ? 'opacity-100' : 'opacity-0'
+              }`}
           >
             <div className="bg-primary text-white px-6 py-3 rounded-2xl font-bold text-2xl rotate-[15deg] shadow-xl border-4 border-white">
               MATCH
@@ -280,7 +280,7 @@ export function SwipeMatch() {
                 <p className="text-xl font-semibold text-foreground">Match Confidence</p>
               </div>
               <p className="text-muted">Based on analysis of markings, breed, and color</p>
-              
+
               {/* Email Contact Section */}
               <div className="bg-background rounded-2xl p-4 space-y-4">
                 <div className="flex items-center justify-center gap-2 text-foreground">
@@ -302,8 +302,8 @@ export function SwipeMatch() {
                   rows={3}
                 />
               </div>
-              
-              <button 
+
+              <button
                 onClick={() => {
                   // Handle email submission
                   console.log('Sending email:', { email: contactEmail, message: contactMessage });

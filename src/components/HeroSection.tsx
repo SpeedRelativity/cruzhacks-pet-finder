@@ -26,18 +26,23 @@ export const HeroSection = () => {
                 </p>
 
                 <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
-                    <Link href="/swipe" className="group relative px-8 py-4 bg-blue-600 rounded-full font-bold text-white shadow-lg hover:shadow-blue-500/50 transition-all overflow-hidden">
-                        <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
+                    <Link href="/swipe" className="group relative px-8 py-4 bg-primary rounded-full font-bold text-primary-foreground shadow-lg hover:shadow-primary transition-all overflow-hidden">
                         <span className="relative flex items-center gap-2">
                             <Search size={20} />
                             I Found a Pet
                         </span>
                     </Link>
 
-                    <Link href="/upload" className="group relative px-8 py-4 bg-transparent border-2 border-gray-700 rounded-full font-bold text-white hover:border-gray-500 transition-all">
+                    <Link href="/upload" className="group relative px-8 py-4 bg-transparent border-2 border-primary/50 text-foreground rounded-full font-bold hover:border-primary hover:bg-primary/5 transition-all">
                         <span className="flex items-center gap-2">
                             <PawPrint size={20} />
                             I Lost a Pet
+                        </span>
+                    </Link>
+
+                    <Link href="/auth0-demo" className="group relative px-8 py-4 bg-secondary rounded-full font-bold text-white shadow-lg hover:opacity-90 transition-all">
+                        <span className="flex items-center gap-2">
+                            Sign In
                         </span>
                     </Link>
                 </div>

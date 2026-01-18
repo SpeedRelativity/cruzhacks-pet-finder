@@ -1,7 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Lato:wght@400;700&display=swap');
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 @source "./src/**/*.{js,ts,jsx,tsx,mdx}";
 
 @custom-variant dark (&:is(.dark *));
@@ -10,54 +8,61 @@
 
 :root {
   --font-size: 16px;
-  
+
   /* PetFinder Warm Theme Colors - Inspired by shelter design */
-  --background: #F5F2ED; /* Warm beige/cream */
-  --foreground: #3D3D3D; /* Dark charcoal for text */
-  
+  --background: #F5F2ED;
+  /* Warm beige/cream */
+  --foreground: #3D3D3D;
+  /* Dark charcoal for text */
+
   /* Primary - Warm Golden Yellow (CTA) */
-  --primary: #E8C468; /* Golden yellow */
+  --primary: #E8C468;
+  /* Golden yellow */
   --primary-foreground: #3D3D3D;
   --primary-light: rgba(232, 196, 104, 0.15);
   --primary-medium: rgba(232, 196, 104, 0.3);
-  
+
   /* Secondary - Dusty Rose/Pink (Accents) */
-  --secondary: #C9857B; /* Muted dusty rose */
+  --secondary: #C9857B;
+  /* Muted dusty rose */
   --secondary-foreground: #ffffff;
-  
+
   /* Accent - Teal for found/positive actions */
-  --accent: #6DBDB7; /* Soft teal */
+  --accent: #6DBDB7;
+  /* Soft teal */
   --accent-foreground: #ffffff;
   --accent-light: rgba(109, 189, 183, 0.15);
-  
+
   /* Neutral Colors */
-  --card: #FFFFFF; /* Pure white cards */
+  --card: #FFFFFF;
+  /* Pure white cards */
   --card-foreground: #3D3D3D;
   --popover: #FFFFFF;
   --popover-foreground: #3D3D3D;
   --muted: rgba(61, 61, 61, 0.5);
   --muted-foreground: rgba(61, 61, 61, 0.7);
-  
+
   /* Backgrounds */
-  --dark-overlay: rgba(80, 90, 70, 0.85); /* Olive/forest green for overlays */
-  
+  --dark-overlay: rgba(80, 90, 70, 0.85);
+  /* Olive/forest green for overlays */
+
   /* Destructive */
   --destructive: #D66D5B;
   --destructive-foreground: #ffffff;
-  
+
   /* Borders & Inputs */
   --border: rgba(0, 0, 0, 0.08);
   --input: transparent;
   --input-background: #FFFFFF;
   --switch-background: #E0DDD8;
   --ring: rgba(232, 196, 104, 0.5);
-  
+
   /* Font Weights */
   --font-weight-medium: 500;
   --font-weight-semibold: 600;
   --font-weight-bold: 700;
   --font-weight-normal: 400;
-  
+
   /* Border Radius */
   --radius: 0.75rem;
   --radius-sm: 0.5rem;
@@ -65,11 +70,11 @@
   --radius-lg: 1rem;
   --radius-xl: 1.5rem;
   --radius-full: 9999px;
-  
+
   /* Shadows */
   --shadow-sm: 0px 2px 8px rgba(0, 0, 0, 0.08), 0px 4px 16px rgba(0, 0, 0, 0.05);
   --shadow-primary: 0px 4px 12px rgba(232, 196, 104, 0.25);
-  
+
   /* Chart Colors */
   --chart-1: #E8C468;
   --chart-2: #C9857B;
@@ -205,7 +210,7 @@
       font-weight: var(--font-weight-normal);
       line-height: 1.5;
     }
-    
+
     p {
       font-family: 'Inter', sans-serif;
       line-height: 1.75rem;
@@ -248,6 +253,7 @@ html {
     opacity: 0;
     transform: translateY(10px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
