@@ -27,15 +27,16 @@ export function Navigation({ currentPage, onNavigate }: NavigationProps) {
   console.log("Current user state:", { user, isLoading }); // Debug log
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container flex h-14 max-w-screen-2xl items-center justify-between px-4 sm:px-8">
+    <header className="sticky top-0 z-70 w-full border-b border-amber-100 bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/90 shadow-sm">
+      <div className="w-full max-w-7xl mx-auto flex h-16 items-center justify-between px-4 sm:px-6 lg:px-8">
         {/* Logo Area */}
-        <div className="flex items-center gap-2 font-bold text-xl text-primary cursor-pointer" onClick={() => onNavigate('dashboard')}>
-          <span>🐾 PetFinder</span>
+        <div className="flex items-center gap-2 font-bold text-lg text-amber-600 cursor-pointer hover:text-amber-700 transition-colors flex-shrink-0" onClick={() => onNavigate('dashboard')}>
+          <span className="text-2xl">🐾</span>
+          <span>PawScout</span>
         </div>
 
         {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center gap-2">
+        <nav className="hidden md:flex items-center gap-1 mx-auto">
           {navItems.map((item) => {
             const Icon = item.icon;
             const isActive = currentPage === item.id;
@@ -44,12 +45,12 @@ export function Navigation({ currentPage, onNavigate }: NavigationProps) {
               <button
                 key={item.id}
                 onClick={() => onNavigate(item.id)}
-                className={`flex items-center gap-2 px-4 py-2 rounded-xl font-medium transition-all ${isActive
-                  ? 'bg-primary/10 text-primary'
-                  : 'text-muted-foreground hover:bg-muted hover:text-foreground'
+                className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all text-sm ${isActive
+                  ? 'bg-amber-50 text-amber-700'
+                  : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
                   }`}
               >
-                <Icon className="w-4 h-4" />
+                <Icon className="w-5 h-5" />
                 <span>{item.label}</span>
               </button>
             );
@@ -57,22 +58,22 @@ export function Navigation({ currentPage, onNavigate }: NavigationProps) {
         </nav>
 
         {/* Auth Section */}
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3 flex-shrink-0">
           {!isLoading && (
             user ? (
               <div className="flex items-center gap-3">
-                <span className="text-sm font-medium hidden sm:inline-block">Hi, {user.name?.split(' ')[0]}</span>
-                <Link href="/api/auth/logout" className="px-4 py-2 text-sm font-medium text-destructive hover:bg-destructive/10 rounded-lg transition-colors">
+                <span className="text-sm font-medium text-gray-700 hidden sm:inline-block">Hi, {user.name?.split(' ')[0]}</span>
+                <Link href="/api/auth/logout" className="px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-lg transition-colors">
                   Log Out
                 </Link>
                 <img
                   src={user.picture || ''}
                   alt="Profile"
-                  className="w-8 h-8 rounded-full border border-border"
+                  className="w-9 h-9 rounded-full border-2 border-amber-200"
                 />
               </div>
             ) : (
-              <Link href="/auth0-demo" className="px-6 py-2 bg-primary text-primary-foreground rounded-full font-bold text-sm hover:opacity-90 transition-opacity shadow-sm">
+              <Link href="/auth0-demo" className="px-5 py-2 bg-amber-500 text-white rounded-lg font-semibold text-sm hover:bg-amber-600 transition-colors shadow-md hover:shadow-lg">
                 Sign In
               </Link>
             )
