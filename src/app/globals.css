@@ -1,20 +1,311 @@
-@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Lato:wght@400;700&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@source "./src/**/*.{js,ts,jsx,tsx,mdx}";
+
+@custom-variant dark (&:is(.dark *));
+
+/* Google Fonts Import */
 
 :root {
-    /* Enforce Dark Mode by default */
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  --font-size: 16px;
+  
+  /* PetFinder Warm Theme Colors - Inspired by shelter design */
+  --background: #F5F2ED; /* Warm beige/cream */
+  --foreground: #3D3D3D; /* Dark charcoal for text */
+  
+  /* Primary - Warm Golden Yellow (CTA) */
+  --primary: #E8C468; /* Golden yellow */
+  --primary-foreground: #3D3D3D;
+  --primary-light: rgba(232, 196, 104, 0.15);
+  --primary-medium: rgba(232, 196, 104, 0.3);
+  
+  /* Secondary - Dusty Rose/Pink (Accents) */
+  --secondary: #C9857B; /* Muted dusty rose */
+  --secondary-foreground: #ffffff;
+  
+  /* Accent - Teal for found/positive actions */
+  --accent: #6DBDB7; /* Soft teal */
+  --accent-foreground: #ffffff;
+  --accent-light: rgba(109, 189, 183, 0.15);
+  
+  /* Neutral Colors */
+  --card: #FFFFFF; /* Pure white cards */
+  --card-foreground: #3D3D3D;
+  --popover: #FFFFFF;
+  --popover-foreground: #3D3D3D;
+  --muted: rgba(61, 61, 61, 0.5);
+  --muted-foreground: rgba(61, 61, 61, 0.7);
+  
+  /* Backgrounds */
+  --dark-overlay: rgba(80, 90, 70, 0.85); /* Olive/forest green for overlays */
+  
+  /* Destructive */
+  --destructive: #D66D5B;
+  --destructive-foreground: #ffffff;
+  
+  /* Borders & Inputs */
+  --border: rgba(0, 0, 0, 0.08);
+  --input: transparent;
+  --input-background: #FFFFFF;
+  --switch-background: #E0DDD8;
+  --ring: rgba(232, 196, 104, 0.5);
+  
+  /* Font Weights */
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  --font-weight-normal: 400;
+  
+  /* Border Radius */
+  --radius: 0.75rem;
+  --radius-sm: 0.5rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.5rem;
+  --radius-full: 9999px;
+  
+  /* Shadows */
+  --shadow-sm: 0px 2px 8px rgba(0, 0, 0, 0.08), 0px 4px 16px rgba(0, 0, 0, 0.05);
+  --shadow-primary: 0px 4px 12px rgba(232, 196, 104, 0.25);
+  
+  /* Chart Colors */
+  --chart-1: #E8C468;
+  --chart-2: #C9857B;
+  --chart-3: #6DBDB7;
+  --chart-4: #A0A890;
+  --chart-5: #D9B88F;
+}
+
+.dark {
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.985 0 0);
+  --card: oklch(0.145 0 0);
+  --card-foreground: oklch(0.985 0 0);
+  --popover: oklch(0.145 0 0);
+  --popover-foreground: oklch(0.985 0 0);
+  --primary: #4ECDC4;
+  --primary-foreground: oklch(0.205 0 0);
+  --secondary: #FF6B6B;
+  --secondary-foreground: oklch(0.205 0 0);
+  --muted: oklch(0.269 0 0);
+  --muted-foreground: oklch(0.708 0 0);
+  --accent: #9B7EDE;
+  --accent-foreground: oklch(0.985 0 0);
+  --destructive: oklch(0.396 0.141 25.723);
+  --destructive-foreground: oklch(0.637 0.237 25.331);
+  --border: oklch(0.269 0 0);
+  --input: oklch(0.269 0 0);
+  --ring: oklch(0.439 0 0);
 }
 
 @theme inline {
-    --color-background: var(--background);
-    --color-foreground: var(--foreground);
-    --font-sans: var(--font-geist-sans);
-    --font-mono: var(--font-geist-mono);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary-light: var(--primary-light);
+  --color-primary-medium: var(--primary-medium);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent-light: var(--accent-light);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-input-background: var(--input-background);
+  --color-switch-background: var(--switch-background);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-dark-overlay: var(--dark-overlay);
+  --radius-sm: var(--radius-sm);
+  --radius-md: var(--radius-md);
+  --radius-lg: var(--radius-lg);
+  --radius-xl: var(--radius-xl);
+  --radius-full: var(--radius-full);
 }
 
-body {
-    background: var(--background);
-    color: var(--foreground);
-    font-family: Arial, Helvetica, sans-serif;
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-family: 'Lato', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+      'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  }
+}
+
+/**
+ * Base typography
+ */
+@layer base {
+  :where(:not(:has([class*=' text-']), :not(:has([class^='text-'])))) {
+    h1 {
+      font-family: 'Poppins', sans-serif;
+      font-size: 3.1875rem;
+      font-weight: var(--font-weight-bold);
+      line-height: 3.75rem;
+      color: var(--foreground);
+    }
+
+    h2 {
+      font-family: 'Poppins', sans-serif;
+      font-size: 1.59375rem;
+      font-weight: var(--font-weight-bold);
+      line-height: 2.25rem;
+      color: var(--foreground);
+    }
+
+    h3 {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.95625rem;
+      font-weight: var(--font-weight-semibold);
+      line-height: 1.75rem;
+      color: var(--foreground);
+    }
+
+    h4 {
+      font-size: var(--text-base);
+      font-weight: var(--font-weight-medium);
+      line-height: 1.5;
+    }
+
+    label {
+      font-size: var(--text-base);
+      font-weight: var(--font-weight-medium);
+      line-height: 1.5;
+    }
+
+    button {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.95625rem;
+      font-weight: var(--font-weight-semibold);
+      line-height: 1.75rem;
+    }
+
+    input {
+      font-size: var(--text-base);
+      font-weight: var(--font-weight-normal);
+      line-height: 1.5;
+    }
+    
+    p {
+      font-family: 'Inter', sans-serif;
+      line-height: 1.75rem;
+    }
+  }
+}
+
+html {
+  font-size: var(--font-size);
+}
+
+/* Custom utility classes for PetFinder */
+.btn-primary {
+  @apply bg-primary text-primary-foreground rounded-2xl px-8 py-4 font-semibold shadow-primary hover:opacity-90 transition-opacity;
+}
+
+.btn-secondary {
+  @apply bg-dark-overlay text-white rounded-2xl px-8 py-4 font-semibold hover:opacity-90 transition-opacity;
+}
+
+.card {
+  @apply bg-card rounded-2xl shadow-sm;
+}
+
+.badge-missing {
+  @apply bg-secondary text-white rounded-full px-3 py-1 text-xs font-semibold;
+}
+
+.badge-found {
+  @apply bg-accent text-white rounded-full px-3 py-1 text-xs font-semibold;
+}
+
+.badge-stray {
+  @apply bg-primary text-primary-foreground rounded-full px-3 py-1 text-xs font-semibold;
+}
+
+/* Animation utilities */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.4s ease-out;
+}
+
+/* Glassmorphism utilities */
+.glass {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(201, 133, 123, 0.2);
+}
+
+.glass-dark {
+  background: rgba(80, 90, 70, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Hover glow effects */
+.glow-primary {
+  box-shadow: 0 0 24px rgba(232, 196, 104, 0.35);
+}
+
+.glow-secondary {
+  box-shadow: 0 0 24px rgba(201, 133, 123, 0.35);
+}
+
+.glow-accent {
+  box-shadow: 0 0 24px rgba(109, 189, 183, 0.35);
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--primary);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--secondary);
 }
