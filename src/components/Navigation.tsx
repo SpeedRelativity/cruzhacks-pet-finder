@@ -31,7 +31,7 @@ export function Navigation({ currentPage, onNavigate }: NavigationProps) {
       <div className="w-full max-w-7xl mx-auto flex h-20 items-center justify-between px-4 sm:px-6 lg:px-8">        {/* Logo Area */}
         <div className="flex items-center gap-3 font-bold text-lg text-amber-600 cursor-pointer hover:text-amber-700 transition-colors flex-shrink-0" onClick={() => onNavigate('dashboard')}>
           <span className="text-4xl">🐾</span>
-          <span>Pawnder</span>
+          <span>PawScout</span>
         </div>
 
         {/* Desktop Navigation */}

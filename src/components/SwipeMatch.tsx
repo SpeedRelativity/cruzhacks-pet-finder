@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { X, Heart, Info, MapPin, Calendar, Sparkles, Mail, CheckCircle2, AlertCircle, ChevronLeft, ChevronRight } from 'lucide-react';
+import { X, Info, MapPin, Calendar, Sparkles, Mail, CheckCircle2, AlertCircle, ChevronLeft, ChevronRight } from 'lucide-react';
 
 interface Match {
   match_id: string;
